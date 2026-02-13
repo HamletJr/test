@@ -49,17 +49,10 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       # =========================
-      # PRINT SONAR PROPERTIES
-      # =========================
-      - name: Print Sonar Properties
-        run: ./gradlew sonarProperties
-
-      # =========================
       # SONAR SCAN (NO FAIL)
       # =========================
       - name: SonarCloud Scan (Debug - no fail)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew sonar --info --stacktrace
-        continue-on-error: true
+        run: ./gradlew sonar -Dsonar.qualitygate.wait=true --info
