@@ -30,9 +30,6 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-      - name: Run Linter and Unit tests
-        run: ./gradlew check
-
       - name: SonarCloud Scan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
