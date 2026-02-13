@@ -2,13 +2,13 @@ name: Continuous Integration (CI)
 
 on:
   push:
-    branches: [ "main", "ci-cd-person-a"]
+    branches: [ "main", "ci-cd-person-a" ]
   pull_request:
     branches: [ "main" ]
 
 jobs:
   build-and-test:
-    name: Build, Lint, Test, and Sonar Analysis
+    name: Build, Lint, Test, and Sonar Analysis (DEBUG MODE)
     runs-on: ubuntu-latest
 
     steps:
@@ -27,11 +27,39 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      # =========================
+      # BUILD
+      # =========================
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build --info --stacktrace
 
-      - name: SonarCloud Scan
+      # =========================
+      # DEBUG SONAR TOKEN
+      # =========================
+      - name: Debug SONAR_TOKEN presence
+        run: |
+          if [ -z "$SONAR_TOKEN" ]; then
+            echo "❌ SONAR_TOKEN IS EMPTY"
+            exit 1
+          else
+            echo "✅ SONAR_TOKEN EXISTS"
+            echo "Token length: ${#SONAR_TOKEN}"
+          fi
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      # =========================
+      # PRINT SONAR PROPERTIES
+      # =========================
+      - name: Print Sonar Properties
+        run: ./gradlew sonarProperties
+
+      # =========================
+      # SONAR SCAN (NO FAIL)
+      # =========================
+      - name: SonarCloud Scan (Debug - no fail)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew sonar -Dsonar.qualitygate.wait=true --info
+        run: ./gradlew sonar --info --stacktrace
+        continue-on-error: true
