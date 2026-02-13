@@ -48,9 +48,6 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      # =========================
-      # SONAR SCAN (NO FAIL)
-      # =========================
       - name: SonarCloud Scan (Debug - no fail)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
